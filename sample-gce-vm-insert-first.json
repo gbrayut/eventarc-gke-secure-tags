@@ -1,0 +1,152 @@
+{
+  "insertId": "p941nve2at0y",
+  "logName": "projects/example-vpc/logs/cloudaudit.googleapis.com%2Factivity",
+  "operation": {
+    "first": true,
+    "id": "operation-1666999408926-5ec208b9c1e12-a75b883f-ac362311",
+    "producer": "compute.googleapis.com"
+  },
+  "protoPayload": {
+    "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+    "authenticationInfo": {
+      "principalEmail": "admin@example.com",
+      "principalSubject": "user:admin@example.com"
+    },
+    "authorizationInfo": [
+      {
+        "granted": true,
+        "permission": "compute.instances.create",
+        "resourceAttributes": {
+          "name": "projects/example-vpc/zones/us-west1-a/instances/test-vm3",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.disks.create",
+        "resourceAttributes": {
+          "name": "projects/example-vpc/zones/us-west1-a/disks/test-vm3",
+          "service": "compute",
+          "type": "compute.disks"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.subnetworks.use",
+        "resourceAttributes": {
+          "name": "projects/example-vpc/regions/us-west1/subnetworks/gke-oregon-subnet",
+          "service": "compute",
+          "type": "compute.subnetworks"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.instances.setServiceAccount",
+        "resourceAttributes": {
+          "name": "projects/example-vpc/zones/us-west1-a/instances/test-vm3",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      }
+    ],
+    "methodName": "v1.compute.instances.insert",
+    "request": {
+      "@type": "type.googleapis.com/compute.instances.insert",
+      "canIpForward": false,
+      "deletionProtection": false,
+      "disks": [
+        {
+          "autoDelete": true,
+          "boot": true,
+          "initializeParams": {
+            "diskSizeGb": "10",
+            "diskType": "https://compute.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a/diskTypes/pd-standard",
+            "sourceImage": "https://compute.googleapis.com/compute/v1/projects/ubuntu-os-cloud/zones/-/imageFamilyViews/ubuntu-2204-lts"
+          },
+          "mode": "READ_WRITE",
+          "type": "PERSISTENT"
+        }
+      ],
+      "machineType": "https://compute.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a/machineTypes/e2-custom-2-6400",
+      "name": "test-vm3",
+      "networkInterfaces": [
+        {
+          "aliasIpRanges": [
+            {
+              "ipCidrRange": "/24",
+              "subnetworkRangeName": "gkepods"
+            }
+          ],
+          "network": "https://compute.googleapis.com/compute/v1/projects/example-vpc/global/networks/gke-vpc",
+          "nicType": "GVNIC",
+          "subnetwork": "https://compute.googleapis.com/compute/v1/projects/example-vpc/regions/us-west1/subnetworks/gke-oregon-subnet"
+        }
+      ],
+      "scheduling": {
+        "automaticRestart": true
+      },
+      "serviceAccounts": [
+        {
+          "email": "default",
+          "scopes": [
+            "https://www.googleapis.com/auth/devstorage.read_only",
+            "https://www.googleapis.com/auth/logging.write",
+            "https://www.googleapis.com/auth/monitoring.write",
+            "https://www.googleapis.com/auth/pubsub",
+            "https://www.googleapis.com/auth/service.management.readonly",
+            "https://www.googleapis.com/auth/servicecontrol",
+            "https://www.googleapis.com/auth/trace.append"
+          ]
+        }
+      ],
+      "shieldedInstanceConfig": {
+        "enableIntegrityMonitoring": true,
+        "enableVtpm": true
+      }
+    },
+    "requestMetadata": {
+      "callerIp": "2001:db8:4300:204c:8914:8caf:267b:d3",
+      "callerSuppliedUserAgent": "google-cloud-sdk gcloud/407.0.0 command/gcloud.compute.instances.create invocation-id/52d952e8adf14f1d8e16f09b4f72b15c environment/None environment-version/None interactive/True from-script/False python/3.9.12 term/xterm-256color (Linux 5.18.16-1rodete4-amd64),gzip(gfe)",
+      "destinationAttributes": {},
+      "requestAttributes": {
+        "auth": {},
+        "time": "2022-10-28T23:23:31.214355Z"
+      }
+    },
+    "resourceLocation": {
+      "currentLocations": [
+        "us-west1-a"
+      ]
+    },
+    "resourceName": "projects/example-vpc/zones/us-west1-a/instances/test-vm3",
+    "response": {
+      "@type": "type.googleapis.com/operation",
+      "id": "5774758080129653405",
+      "insertTime": "2022-10-28T16:23:31.128-07:00",
+      "name": "operation-1666999408926-5ec208b9c1e12-a75b883f-ac362311",
+      "operationType": "insert",
+      "progress": "0",
+      "selfLink": "https://www.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a/operations/operation-1666999408926-5ec208b9c1e12-a75b883f-ac362311",
+      "selfLinkWithId": "https://www.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a/operations/5774758080129653405",
+      "startTime": "2022-10-28T16:23:31.129-07:00",
+      "status": "RUNNING",
+      "targetId": "8586086974501957833",
+      "targetLink": "https://www.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a/instances/test-vm3",
+      "user": "admin@example.com",
+      "zone": "https://www.googleapis.com/compute/v1/projects/example-vpc/zones/us-west1-a"
+    },
+    "serviceName": "compute.googleapis.com"
+  },
+  "receiveTimestamp": "2022-10-28T23:23:31.298718626Z",
+  "resource": {
+    "labels": {
+      "instance_id": "8586086974501957833",
+      "project_id": "example-vpc",
+      "zone": "us-west1-a"
+    },
+    "type": "gce_instance"
+  },
+  "severity": "NOTICE",
+  "timestamp": "2022-10-28T23:23:28.955138Z"
+}
