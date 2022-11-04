@@ -1,4 +1,5 @@
-//
+// Cloud Run Server that uses EventArc to process v1.compute.instances.insert CloudEvents
+// for new VMs and create Secure Tag bindings for them.
 
 package main
 

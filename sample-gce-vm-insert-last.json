@@ -1,0 +1,39 @@
+{
+  "insertId": "z8qyswd8qtk",
+  "logName": "projects/example-vpc/logs/cloudaudit.googleapis.com%2Factivity",
+  "operation": {
+    "id": "operation-1666999408926-5ec208b9c1e12-a75b883f-ac362311",
+    "last": true,
+    "producer": "compute.googleapis.com"
+  },
+  "protoPayload": {
+    "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+    "authenticationInfo": {
+      "principalEmail": "admin@example.com",
+      "principalSubject": "user:admin@example.com"
+    },
+    "methodName": "v1.compute.instances.insert",
+    "request": {
+      "@type": "type.googleapis.com/compute.instances.insert"
+    },
+    "requestMetadata": {
+      "callerIp": "2001:db8:4300:204c:8914:8caf:267b:d3",
+      "callerSuppliedUserAgent": "google-cloud-sdk gcloud/407.0.0 command/gcloud.compute.instances.create invocation-id/52d952e8adf14f1d8e16f09b4f72b15c environment/None environment-version/None interactive/True from-script/False python/3.9.12 term/xterm-256color (Linux 5.18.16-1rodete4-amd64),gzip(gfe)",
+      "destinationAttributes": {},
+      "requestAttributes": {}
+    },
+    "resourceName": "projects/example-vpc/zones/us-west1-a/instances/test-vm3",
+    "serviceName": "compute.googleapis.com"
+  },
+  "receiveTimestamp": "2022-10-28T23:23:37.47712096Z",
+  "resource": {
+    "labels": {
+      "instance_id": "689579460943534750",
+      "project_id": "example-vpc",
+      "zone": "us-west1-a"
+    },
+    "type": "gce_instance"
+  },
+  "severity": "NOTICE",
+  "timestamp": "2022-10-28T23:23:36.479234Z"
+}
