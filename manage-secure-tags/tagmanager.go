@@ -52,6 +52,7 @@ func (t *TagManager) GetZoneClient(zone string) (*cloudresourcemanager.Service, 
 	if err != nil {
 		return nil, fmt.Errorf("Error creating cloudresourcemanager client in %s: %w", zone, err)
 	}
+        t.zoneClients[zone] = c
 	return c, nil
 }
 
