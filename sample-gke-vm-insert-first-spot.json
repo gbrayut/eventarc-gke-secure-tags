@@ -1,0 +1,220 @@
+{
+  "insertId": "k9pfh2e2qaak",
+  "logName": "projects/example-gke/logs/cloudaudit.googleapis.com%2Factivity",
+  "operation": {
+    "first": true,
+    "id": "operation-1667588736638-5eca9c2475f2a-b367e5e2-5b07019b",
+    "producer": "compute.googleapis.com"
+  },
+  "protoPayload": {
+    "@type": "type.googleapis.com/google.cloud.audit.AuditLog",
+    "authenticationInfo": {
+      "principalEmail": "503076212345@cloudservices.gserviceaccount.com"
+    },
+    "authorizationInfo": [
+      {
+        "granted": true,
+        "permission": "compute.instances.create",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.disks.create",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/disks/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.disks"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.disks.setLabels",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/disks/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.disks"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.subnetworks.use",
+        "resourceAttributes": {
+          "name": "projects/example-gke/regions/us-west1/subnetworks/gke-oregon-subnet",
+          "service": "compute",
+          "type": "compute.subnetworks"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.instances.setMetadata",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.instances.setTags",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.instances.setLabels",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      },
+      {
+        "granted": true,
+        "permission": "compute.instances.setServiceAccount",
+        "resourceAttributes": {
+          "name": "projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+          "service": "compute",
+          "type": "compute.instances"
+        }
+      }
+    ],
+    "methodName": "v1.compute.instances.insert",
+    "request": {
+      "@type": "type.googleapis.com/compute.instances.insert",
+      "disks": [
+        {
+          "autoDelete": true,
+          "boot": true,
+          "deviceName": "persistent-disk-0",
+          "initializeParams": {
+            "diskSizeGb": "100",
+            "diskType": "projects/503076212345/zones/us-west1-c/diskTypes/pd-standard",
+            "guestOsFeatures": [
+              {
+                "type": "UEFI_COMPATIBLE"
+              }
+            ],
+            "labels": [
+              {
+                "key": "goog-gke-volume",
+                "value": ""
+              }
+            ],
+            "onUpdateAction": "RECREATE_DISK_IF_SOURCE_CHANGED",
+            "sourceImage": "https://www.googleapis.com/compute/v1/projects/ubuntu-os-gke-cloud/global/images/ubuntu-gke-2004-1-23-v20220714"
+          },
+          "mode": "READ_WRITE",
+          "type": "PERSISTENT"
+        }
+      ],
+      "labels": [
+        {
+          "key": "goog-gke-node",
+          "value": ""
+        }
+      ],
+      "machineType": "projects/503076212345/zones/us-west1-c/machineTypes/e2-standard-2",
+      "name": "gke-gke-oregon-spot-nodes-9609d250-2hzh",
+      "networkInterfaces": [
+        {
+          "aliasIpRanges": [
+            {
+              "ipCidrRange": "/24",
+              "subnetworkRangeName": "gkepods"
+            }
+          ],
+          "name": "nic0",
+          "network": "https://www.googleapis.com/compute/v1/projects/example-gke/global/networks/gke-vpc",
+          "subnetwork": "https://www.googleapis.com/compute/v1/projects/example-gke/regions/us-west1/subnetworks/gke-oregon-subnet"
+        }
+      ],
+      "networkPerformanceConfig": {
+        "totalEgressBandwidthTier": "DEFAULT"
+      },
+      "requestId": "f3ab1f92-825e-3fa9-bd8e-997a42424301",
+      "scheduling": {
+        "automaticRestart": false,
+        "instanceTerminationAction": "STOP",
+        "onHostMaintenance": "TERMINATE",
+        "preemptible": true,
+        "provisioningModel": "SPOT"
+      },
+      "serviceAccounts": [
+        {
+          "email": "default",
+          "scopes": [
+            "https://www.googleapis.com/auth/devstorage.read_only",
+            "https://www.googleapis.com/auth/logging.write",
+            "https://www.googleapis.com/auth/monitoring",
+            "https://www.googleapis.com/auth/service.management.readonly",
+            "https://www.googleapis.com/auth/servicecontrol",
+            "https://www.googleapis.com/auth/trace.append"
+          ]
+        }
+      ],
+      "shieldedInstanceConfig": {
+        "enableIntegrityMonitoring": true,
+        "enableSecureBoot": false,
+        "enableVtpm": true
+      },
+      "tags": {
+        "tags": [
+          "gketag2",
+          "stv-642676120853",
+          "stv-123456789012",
+          "gke-gke-oregon-d432b0f8-node"
+        ]
+      }
+    },
+    "requestMetadata": {
+      "callerSuppliedUserAgent": "GCE Managed Instance Group for GKE",
+      "destinationAttributes": {},
+      "requestAttributes": {
+        "auth": {},
+        "time": "2022-11-04T19:05:37.303369Z"
+      }
+    },
+    "resourceLocation": {
+      "currentLocations": [
+        "us-west1-c"
+      ]
+    },
+    "resourceName": "projects/503076212345/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+    "response": {
+      "@type": "type.googleapis.com/operation",
+      "clientOperationId": "f3ab1f92-825e-3fa9-bd8e-997a42424301",
+      "id": "7125034938302782574",
+      "insertTime": "2022-11-04T12:05:37.231-07:00",
+      "name": "operation-1667588736638-5eca9c2475f2a-b367e5e2-5b07019b",
+      "operationType": "insert",
+      "progress": "0",
+      "selfLink": "https://www.googleapis.com/compute/v1/projects/example-gke/zones/us-west1-c/operations/operation-1667588736638-5eca9c2475f2a-b367e5e2-5b07019b",
+      "selfLinkWithId": "https://www.googleapis.com/compute/v1/projects/example-gke/zones/us-west1-c/operations/7125034938302782574",
+      "startTime": "2022-11-04T12:05:37.231-07:00",
+      "status": "RUNNING",
+      "targetId": "5782564763008031855",
+      "targetLink": "https://www.googleapis.com/compute/v1/projects/example-gke/zones/us-west1-c/instances/gke-gke-oregon-spot-nodes-9609d250-2hzh",
+      "user": "503076212345@cloudservices.gserviceaccount.com",
+      "zone": "https://www.googleapis.com/compute/v1/projects/example-gke/zones/us-west1-c"
+    },
+    "serviceName": "compute.googleapis.com"
+  },
+  "receiveTimestamp": "2022-11-04T19:05:38.072070351Z",
+  "resource": {
+    "labels": {
+      "instance_id": "5782564763008031855",
+      "project_id": "example-gke",
+      "zone": "us-west1-c"
+    },
+    "type": "gce_instance"
+  },
+  "severity": "NOTICE",
+  "timestamp": "2022-11-04T19:05:36.54988Z"
+}
