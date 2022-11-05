@@ -125,27 +125,23 @@ func (t *TagManager) processLogEntrypb(pb []byte, w http.ResponseWriter, r *http
 
 	// extract details needed for binding tags
 	vm := &gceInstance{
-		insertid:   le.InsertId,
-		targetLink: al.Response.Fields["targetLink"].String(),
-		instanceid: le.Resource.Labels["instance_id"],
-		zone:       le.Resource.Labels["zone"],
-		projectid:  le.Resource.Labels["project_id"],
-		template:   "",
+		insertid:    le.InsertId,
+		targetLink:  al.Response.Fields["targetLink"].String(),
+		instanceid:  le.Resource.Labels["instance_id"],
+		zone:        le.Resource.Labels["zone"],
+		projectid:   le.Resource.Labels["project_id"],
+		networktags: nil,
 	}
 
-	// MIG and GKE Node Pools set additional metadata information in the request
-	metadata := al.Request.Fields["metadata"]
-	if metadata != nil {
-		for _, item := range metadata.GetStructValue().Fields["items"].GetListValue().Values {
-			key := item.GetStructValue().Fields["key"].GetStringValue()
-			value := item.GetStructValue().Fields["value"].GetStringValue()
-			//log.Printf("processLogEntrypb: vm metadata %s:%s", key, value)
-			switch key {
-			case "instance-template":
-				vm.template = value
-				return // bail after finding the value(s) we need
-			}
+	// GKE Node Pools have network tags
+	nt := al.Request.Fields["tags"]
+	if nt != nil {
+		t := nt.GetStructValue().Fields["tags"].GetListValue().Values
+		vm.networktags = make([]string, len(t))
+		for i, item := range t {
+			vm.networktags[i] = item.GetStringValue()
 		}
+		//log.Printf("found network tags %s", vm.networktags)
 	}
 
 	// lookup desired tags for VM (based on template prefix matching or targetLink)
@@ -153,6 +149,12 @@ func (t *TagManager) processLogEntrypb(pb []byte, w http.ResponseWriter, r *http
 	if err != nil {
 		log.Printf("GetDesiredTagsForMIG error %s", err)
 	}
+	if tags == nil {
+		log.Printf("done %s (no desired tags)", vm.insertid)
+		return
+	}
+
+	log.Printf("found desired tags %s", tags)
 	// bind tags to VM
 	err = t.BindVMSecureTags(vm, tags)
 	if err != nil {
