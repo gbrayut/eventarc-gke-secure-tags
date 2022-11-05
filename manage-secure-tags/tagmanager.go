@@ -10,6 +10,11 @@ import (
 	"google.golang.org/api/option"
 )
 
+const (
+	networkTagPrefix = "stv-"
+	secureTagPrefix  = "tagValues/"
+)
+
 // GetResourceName returns the full ResourceName for the VM
 func (vm *gceInstance) GetResourceName() string {
 	// Example: //compute.googleapis.com/projects/my-project/zones/us-west1-a/instances/689579460943534750
@@ -26,15 +31,26 @@ type TagManager struct {
 // NewTagManager creates a TagManager for calling Cloud Resource Manager APIs
 func NewTagManager(ctx context.Context) TagManager {
 	return TagManager{
-		ctx: ctx,
+		ctx:         ctx,
+		zoneClients: make(map[string]*cloudresourcemanager.Service),
 	}
 }
 
 // GetDesiredTags returns a slice of tagValues for a given Managed Instance Group
-// It uses Secret Manager as the data source, but any database lookup could be used
+// It matches existing 'stv-0123456789' network tags, but Secret Manager or any database lookup could be used
 func (t *TagManager) GetDesiredTagsForMIG(vm *gceInstance) ([]string, error) {
-	//TODO: Implement Secret Manager lookup
-	return []string{"tagValues/642676120853"}, nil
+	var tags []string
+	if vm.networktags == nil {
+		// could do other matching logic here, based on name, project, etc
+		return nil, nil
+	}
+	for _, networktag := range vm.networktags {
+		// TODO: switch to strings.CutPrefix once go 1.20 is released in January
+		if after, found := CutPrefix(networktag, networkTagPrefix); found {
+			tags = append(tags, secureTagPrefix+after)
+		}
+	}
+	return tags, nil
 }
 
 // GetZoneClient creates a cloudresourcemanager.Service using a zonal endpoint (required for Secure Tags Rest API)
@@ -52,7 +68,7 @@ func (t *TagManager) GetZoneClient(zone string) (*cloudresourcemanager.Service, 
 	if err != nil {
 		return nil, fmt.Errorf("Error creating cloudresourcemanager client in %s: %w", zone, err)
 	}
-        t.zoneClients[zone] = c
+	t.zoneClients[zone] = c
 	return c, nil
 }
 
@@ -80,6 +96,7 @@ func (t *TagManager) BindVMSecureTags(vm *gceInstance, tagvalues []string) error
 	if err != nil {
 		return fmt.Errorf("Error creating cloudresourcemanager client: %w", err)
 	}
+	var lasterror error // TODO: switch to using https://pkg.go.dev/github.com/uber-go/multierr ?
 
 	// https://pkg.go.dev/google.golang.org/api/cloudresourcemanager/v3#TagBinding
 	tag := &cloudresourcemanager.TagBinding{
@@ -89,13 +106,17 @@ func (t *TagManager) BindVMSecureTags(vm *gceInstance, tagvalues []string) error
 		tag.TagValue = v
 		op, err := crmService.TagBindings.Create(tag).Do()
 		if err != nil {
-			return fmt.Errorf("Error calling TagBindings.Create(): %w", err)
+			// keep last error but keep processing any additional bindings. Often is just one missing or having a typo
+			lasterror = fmt.Errorf("Error calling TagBindings.Create() for %s: %w", v, err)
+			log.Printf("TagBindings.Create() %s error ...", v)
+		} else {
+			// op is nil if there is an error, so have to use an else block here to prevent nil pointer panic
+			log.Printf("TagBindings.Create() %s operation name: %s", v, op.Name)
 		}
-		log.Printf("TagBindings.Create() operation name: %s", op.Name)
 		// see results: gcloud alpha resource-manager operations describe rctb.us-west1-a.7889478677166923103 --location us-west1-a
 
 		// TODO: add to pubsub topic to ensure operation completes without error?
 		// via https://pkg.go.dev/google.golang.org/api/cloudresourcemanager/v3#OperationsService.Get
 	}
-	return nil
+	return lasterror
 }
