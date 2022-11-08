@@ -3,6 +3,7 @@ exit # not that kind of script. Run commands below manually.
 DEVSHELL_PROJECT_ID=my-project-name # Usually set automatically in Cloud Shell
 APP_NAME=manage-secure-tags
 REGION=us-central1 # Must be us-central1 per https://cloud.google.com/eventarc/docs/issues
+ORGID=10123456789  # From gcloud organizations list
 
 # Enable required services
 gcloud services enable --project=$DEVSHELL_PROJECT_ID \
@@ -38,18 +39,24 @@ TOPIC="v1-compute-instances"
 gcloud pubsub topics create $TOPIC --project $DEVSHELL_PROJECT_ID
 
 
-# in compute project add sink https://cloud.google.com/eventarc/docs/cross-project-triggers#audit-logs-events
-gcloud logging sinks create cross-project-sink --project example-compute-project \
+# Create org wide aggregated sink https://cloud.google.com/logging/docs/export/aggregated_sinks#gcloud
+gcloud logging sinks create $APP_NAME --organization=$ORGID --include-children \
+  --log-filter='resource.type=gce_instance AND protoPayload.methodName="v1.compute.instances.insert"' \
+  "pubsub.googleapis.com/projects/$DEVSHELL_PROJECT_ID/topics/$TOPIC"
+
+# Or add individual sinks in each compute project https://cloud.google.com/eventarc/docs/cross-project-triggers#audit-logs-events
+gcloud logging sinks create $APP_NAME --project example-compute-project \
   "pubsub.googleapis.com/projects/$DEVSHELL_PROJECT_ID/topics/$TOPIC" \
   --log-filter='protoPayload.methodName="v1.compute.instances.insert"'
-# Add the service account displayed when creating the sink as publisher for pubsub topic
+
+# Add the service account displayed when creating the sink(s) as publisher for pubsub topic
 gcloud pubsub topics add-iam-policy-binding $TOPIC \
     --member="serviceAccount:<listed-value-here>@gcp-sa-logging.iam.gserviceaccount.com" \
     --role=roles/pubsub.publisher
 
 
-# https://cloud.google.com/sdk/gcloud/reference/eventarc/triggers/create
-# Note: this trigger only works for VMs in same project as cloud run (no sink required). See below for cross project trigger
+# direct trigger (when not using aggregated/cross-project sink) https://cloud.google.com/sdk/gcloud/reference/eventarc/triggers/create
+# Note: this trigger only works for VMs in same project as cloud run (no log sink required). See below for aggregated/cross project trigger
 gcloud eventarc triggers create new-gce-vm-direct --project=$DEVSHELL_PROJECT_ID \
   --destination-run-service=$APP_NAME \
   --destination-run-region=$REGION \
@@ -59,7 +66,7 @@ gcloud eventarc triggers create new-gce-vm-direct --project=$DEVSHELL_PROJECT_ID
   --event-filters="methodName=v1.compute.instances.insert" \
   --service-account=$PROJECT_NUMBER-compute@developer.gserviceaccount.com
 
-# Trigger for cross-project events that are added to pubsub topic
+# Trigger for aggregated or cross-project events that are added to pubsub topic
 gcloud eventarc triggers create new-gce-vm-pubsub --project=$DEVSHELL_PROJECT_ID \
     --location=$REGION \
     --destination-run-service=$APP_NAME \

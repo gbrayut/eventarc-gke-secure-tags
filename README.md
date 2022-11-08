@@ -5,11 +5,11 @@
 [Eventarc](https://cloud.google.com/eventarc/docs/overview) lets you asynchronously deliver
 events from different event sources (Google Cloud sources with Audit Logs, Cloud
 Storage buckets, and Pub/Sub topics) to different event consumers (Cloud Run
-services, Cloud Functions, Workflows and GKE services).
+services, Cloud Functions, Workflows, and GKE services).
 
-This repository contains an example for adding [Secure Tags](https://github.com/gbrayut/cloud-examples/tree/main/gce-firewall-rules#resource-manager-tags-secure-iam-tags) to GKE nodes. This is intended as a Proof of Concept workaround until Secure Tags are natively supported by Managed Instance Groups and GKE Node Pools.
+This repository contains an example for adding [Secure Tags](https://github.com/gbrayut/cloud-examples/tree/main/gce-firewall-rules#resource-manager-tags-secure-iam-tags) to GKE nodes via Eventarc and Cloud Run. This is intended as a Proof of Concept workaround until Secure Tags are natively supported by Managed Instance Groups and GKE Node Pools.
 
-You can see the basic deployment process in [setup.sh](./setup.sh), and for [cross-project Eventarc support](https://cloud.google.com/eventarc/docs/cross-project-triggers#audit-logs-events) it uses a Log Sink and Pub/Sub topic.
+You can see the basic deployment process in [setup.sh](./setup.sh), and it requires using a centralized Pub/Sub topic and [cross-project log sink](https://cloud.google.com/eventarc/docs/cross-project-triggers#audit-logs-events) or Organization wide [aggregated log sink](https://cloud.google.com/logging/docs/export/aggregated_sinks#gcloud).
 
 ![cross project audit logs](https://cloud.google.com/static/eventarc/docs/images/cross-project-audit-logs.svg)
 
@@ -17,7 +17,7 @@ For matching VMs to tags this project looks for 'stv-123456789' style Network Ta
 
 ## Testing Latency of creating Tag Bindings
 
-Since VMs/MIGs/NodePools do not yet support adding tags when VMs are created, there initially were some concerns over the delay for bindings to take effect on new VMs. Some testing shows that by using the v1.compute.instances.insert AuditLog events, the bindings should usually be created within 10-20 seconds of when the new VM API call was made. This means unless there is an issue delivering the audit logs, the tags should be applied before the network-online systemd target is reached. And for the case of GKE, which spends 2-6 minutes running cloud-init scripts for each node, the tags should be in effect well before the kubelet has started or any workloads are scheduled.
+Since MIGs/NodePools do not yet support adding tags when VMs are created, there initially were some concerns over the delay for bindings to take effect on new VMs. Some testing shows that by using the v1.compute.instances.insert AuditLog events, the bindings should usually be created within 10-20 seconds of when the new VM API call was made. This means unless there is an issue delivering the audit logs, the tags should be applied before the network-online systemd target is reached. And for the case of GKE, which spends 2-6 minutes running cloud-init scripts for each node, the tags should be in effect well before the kubelet has started or any workloads are scheduled.
 
 ```
 Timing tests:
@@ -46,7 +46,7 @@ node CreationTimestamp:  Tue, 01 Nov 2022 22:14:28 -0600
 node kubeletReady              2022-11-02T04:15:09Z
 ```
 
-That said, there is always the possibility that AuditLogs could be delayed or even missing. If desired you could also use [node-problem-detector](https://kubernetes.io/docs/tasks/debug/debug-cluster/monitor-node-health/) or a custom Daemonset to ensure the expected tags are in place on each node.
+The same AuditLogs are used by other key services like Google Security Command Center or 3rd party SIEMs. That said, there is always the possibility that AuditLogs could be delayed or even missing. If desired you can also use [node-problem-detector](https://kubernetes.io/docs/tasks/debug/debug-cluster/monitor-node-health/) or a custom Daemonset and [nidhogg](https://github.com/uswitch/nidhogg) to ensure the expected tags are in place on each node before workloads are scheduled. This is similar to how Istio validates that iptable rules are in place on each pod/node before the workload starts.
 
 ## Additional Resources
 
